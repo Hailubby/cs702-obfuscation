@@ -12,30 +12,30 @@ import java.net.URISyntaxException;
  */
 public class Main {
     public static void main(String[] args) throws FileNotFoundException, URISyntaxException {
-        //System.out.println("Hello frands");
+        System.out.println("Hello frands");
 
-        File sourceFile = new File(Main.class.getClass().getResource("/CustomDiceActivity.java").toURI());
-
-        //parse the file
-        CompilationUnit compilationUnit = JavaParser.parse(sourceFile);
-
-        // prints the resulting compilation unit to default system output
-        //System.out.println(compilationUnit.toString());
-
-        // visit and print the methods names
-        new MethodVisitor().visit(compilationUnit, null);
+//        File sourceFile = new File(Main.class.getClass().getResource("/AppJavaSrc/com/jjhhh/dice/CustomDiceActivity.java").toURI());
+//
+//        //parse the file
+//        CompilationUnit compilationUnit = JavaParser.parse(sourceFile);
+//
+//        // prints the resulting compilation unit to default system output
+//        //System.out.println(compilationUnit.toString());
+//
+//        // visit and print the methods names
+//        new MethodVisitor().visit(compilationUnit, null);
     }
-    /**
-     * Simple visitor implementation for visiting MethodDeclaration nodes.
-     */
-    private static class MethodVisitor extends VoidVisitorAdapter<Void> {
-        @Override
-        public void visit(MethodDeclaration n, Void arg) {
-            /* here you can access the attributes of the method.
-             this method will be called for all methods in this
-             CompilationUnit, including inner class methods */
-            System.out.println(n.getName());
-            super.visit(n, arg);
-        }
-    }
+//    /**
+//     * Simple visitor implementation for visiting MethodDeclaration nodes.
+//     */
+//    private static class MethodVisitor extends VoidVisitorAdapter<Void> {
+//        @Override
+//        public void visit(MethodDeclaration n, Void arg) {
+//            /* here you can access the attributes of the method.
+//             this method will be called for all methods in this
+//             CompilationUnit, including inner class methods */
+//            System.out.println(n.getName());
+//            super.visit(n, arg);
+//        }
+//    }
 }
