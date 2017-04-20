@@ -29,8 +29,8 @@ public class EncryptionHelper {
             byte[] encrypted = cipher.doFinal(string.getBytes());
             String encodedString = new String(Base64.encodeBase64(encrypted));
 
-            System.out.println("encrypted string: " + Arrays.toString(encrypted));
-            System.out.println("encrypted and encoded string: " + encodedString);
+//            System.out.println("encrypted string: " + Arrays.toString(encrypted));
+//            System.out.println("encrypted and encoded string: " + encodedString);
 
             return encodedString;
         } catch (UnsupportedEncodingException e) {
@@ -65,8 +65,8 @@ public class EncryptionHelper {
 
             String decryptedString = new String(decryptedBytes);
 
-            System.out.println("decrypted string: " + Arrays.toString(decryptedBytes));
-            System.out.println("decrypted and decoded string: " + decryptedString);
+//            System.out.println("decrypted string: " + Arrays.toString(decryptedBytes));
+//            System.out.println("decrypted and decoded string: " + decryptedString);
 
             return decryptedString;
         } catch (UnsupportedEncodingException e) {

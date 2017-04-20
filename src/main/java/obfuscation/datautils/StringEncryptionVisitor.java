@@ -4,18 +4,19 @@ import com.github.javaparser.ast.expr.StringLiteralExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
 /**
- * Created by User on 20/04/2017.
+ * Simple visitor implementation for visiting String Literal Expressions nodes and encrypts them
  */
-public class StringEncryptionVisitor {
-    /**
-     * Simple visitor implementation for visiting String Literal Expressions nodes.
-     */
-    private static class StringVisitor extends VoidVisitorAdapter<Void> {
-        @Override
-        public void visit(StringLiteralExpr s, Void arg) {
+public class StringEncryptionVisitor  extends VoidVisitorAdapter<Void>{
+    private EncryptionHelper encryptionHelper = new EncryptionHelper();
+    private String key = "spiritualisation";
+    private String initVector = "victoriousnesses";
 
-            //encryptionMethod(s.getValue());
-            super.visit(s, arg);
-        }
+    @Override
+    public void visit(StringLiteralExpr s, Void arg) {
+        String encryptedString = encryptionHelper.encrypt(key, initVector, s.getValue());
+        s.setValue(encryptedString);
+
+        super.visit(s, arg);
     }
 }
+
