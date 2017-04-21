@@ -14,8 +14,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 /**
  * Created by User on 18/04/2017.
@@ -64,11 +63,13 @@ public class Main {
         File folder = new File("C:\\Users\\User\\Desktop\\temp");
         cmdLineParser.findJavaFiles(folder);
 
-        ArrayList<CompilationUnit> cuList = cmdLineParser.getCuList();
+        HashMap<String,CompilationUnit> cuMap = cmdLineParser.getCuMap();
 
-        if (cuList.size() != 0){
-            for (CompilationUnit cu : cuList) {
-                System.out.println(cu.toString());
+        if (cuMap.size() != 0){
+            Iterator<Map.Entry<String, CompilationUnit>> entries = cuMap.entrySet().iterator();
+            while (entries.hasNext()) {
+                Map.Entry<String, CompilationUnit> currentEntry = entries.next();
+                System.out.println(currentEntry.getValue().toString());
             }
         }
         else {
