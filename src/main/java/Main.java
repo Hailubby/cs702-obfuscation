@@ -20,10 +20,12 @@ import java.util.*;
  * Created by User on 18/04/2017.
  */
 public class Main {
-    private static JavaExporter javaExporter = new JavaExporter();
 
     public static void main(String[] args) throws FileNotFoundException, URISyntaxException {
         CommandLineParser cmdLineParser = new CommandLineParser();
+        StringEncryptionVisitor stringEncryptionVisitor = new StringEncryptionVisitor();
+        JavaExporter javaExporter = new JavaExporter();
+
 //        File sourceFile = new File(Main.class.getClass().getResource("/AppJavaSrc/com/jjhhh/dice/CustomDiceActivity.java").toURI());
 //        String fileName = "CustomDiceActivity.java";
 //
@@ -39,26 +41,6 @@ public class Main {
 //
 //        javaExporter.exportFile(fileName, compilationUnit.toString());
 
-//
-//        String string = "hello everyone";
-//        byte[] byteString = string.getBytes();
-//        byte[] encodedBytes = Base64.encodeBase64(byteString);
-//
-//        String encodedString = new String(encodedBytes);
-//        System.out.println("Encoded dtring is: " + Arrays.toString(encodedBytes));
-//        System.out.println("Encoded dtring is: " + encodedString);
-//        EncryptionHelper encryptionHelper = new EncryptionHelper();
-//        String key = "HailunHenryJohns";
-//        String iv = "1234567890qwerty";
-//        String encryptedString = encryptionHelper.encrypt(key, iv, string);
-//
-//        try {
-//            encryptionHelper.decrypt(key, iv, encryptedString);
-//        } catch (NoSuchPaddingException e) {
-//            e.printStackTrace();
-//        } catch (NoSuchAlgorithmException e) {
-//            e.printStackTrace();
-//        }
 
         File folder = new File("C:\\Users\\User\\Desktop\\temp");
         cmdLineParser.findJavaFiles(folder);
@@ -69,8 +51,11 @@ public class Main {
             Iterator<Map.Entry<String, CompilationUnit>> entries = cuMap.entrySet().iterator();
             while (entries.hasNext()) {
                 Map.Entry<String, CompilationUnit> currentEntry = entries.next();
+                stringEncryptionVisitor.visit(currentEntry.getValue(), null);
                 System.out.println(currentEntry.getValue().toString());
             }
+
+            javaExporter.exportFile(cuMap);
         }
         else {
             System.out.println("No Java files located in folder to obfuscate");

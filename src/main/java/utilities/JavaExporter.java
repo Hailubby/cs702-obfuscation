@@ -21,12 +21,12 @@ public class JavaExporter {
             Map.Entry<String, CompilationUnit> currentEntry = entries.next();
             try {
                 out = new PrintWriter(currentEntry.getKey());
+                out.println(currentEntry.getValue().toString());
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
+            } finally {
+                out.close();
             }
-            out.println(currentEntry.getValue().toString());
         }
-
-        out.close();
     }
 }
