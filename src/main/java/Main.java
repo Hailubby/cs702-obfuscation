@@ -1,19 +1,10 @@
-import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.expr.StringLiteralExpr;
-import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-import obfuscation.datautils.EncryptionHelper;
 import obfuscation.datautils.StringEncryptionVisitor;
-import org.apache.commons.codec.binary.Base64;
 import utilities.CommandLineParser;
 import utilities.JavaExporter;
-
-import javax.crypto.NoSuchPaddingException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
-import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 /**
