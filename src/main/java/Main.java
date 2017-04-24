@@ -1,4 +1,6 @@
 import com.github.javaparser.ast.CompilationUnit;
+import obfuscation.datautils.DecryptionCreator;
+import obfuscation.datautils.PackageVisitor;
 import obfuscation.datautils.StringEncryptionVisitor;
 import utilities.CommandLineParser;
 import utilities.JavaExporter;
@@ -16,6 +18,7 @@ public class Main {
         CommandLineParser cmdLineParser = new CommandLineParser();
         StringEncryptionVisitor stringEncryptionVisitor = new StringEncryptionVisitor();
         JavaExporter javaExporter = new JavaExporter();
+        PackageVisitor pkgVisitor = new PackageVisitor();
 
 //        File sourceFile = new File(Main.class.getClass().getResource("/AppJavaSrc/com/jjhhh/dice/CustomDiceActivity.java").toURI());
 //        String fileName = "CustomDiceActivity.java";
@@ -33,7 +36,7 @@ public class Main {
 //        javaExporter.exportFile(fileName, compilationUnit.toString());
 
 
-        File folder = new File("C:\\Users\\User\\Desktop\\temp");
+        File folder = new File(Main.class.getClass().getResource("/Original").toURI());
         cmdLineParser.findJavaFiles(folder);
 
         HashMap<String,CompilationUnit> cuMap = cmdLineParser.getCuMap();
@@ -42,11 +45,14 @@ public class Main {
             Iterator<Map.Entry<String, CompilationUnit>> entries = cuMap.entrySet().iterator();
             while (entries.hasNext()) {
                 Map.Entry<String, CompilationUnit> currentEntry = entries.next();
-                stringEncryptionVisitor.visit(currentEntry.getValue(), null);
-                System.out.println(currentEntry.getValue().toString());
+                pkgVisitor.visit(currentEntry.getValue(), null);
+                //stringEncryptionVisitor.visit(currentEntry.getValue(), null);
+                //System.out.println(currentEntry.getValue().toString());
             }
 
-            javaExporter.exportFile(cuMap);
+            DecryptionCreator decryptionCreator = new DecryptionCreator(stringEncryptionVisitor.getKey(), stringEncryptionVisitor.getInitVector(), pkgVisitor);
+            decryptionCreator.createDecryption();
+            //javaExporter.exportFile(cuMap);
         }
         else {
             System.out.println("No Java files located in folder to obfuscate");

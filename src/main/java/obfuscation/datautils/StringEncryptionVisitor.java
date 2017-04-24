@@ -18,5 +18,13 @@ public class StringEncryptionVisitor  extends VoidVisitorAdapter<Void>{
 
         super.visit(s, arg);
     }
+
+    public String getKey() {
+        return key;
+    }
+
+    public String getInitVector() {
+        return initVector;
+    }
 }
 
