@@ -2,6 +2,7 @@ package obfuscation.datautils;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 
 import java.util.ArrayList;
 
@@ -25,7 +26,10 @@ public class DecryptionCreator {
         String pkgName = findPkgName();
 
         // TODO: set package name, initialise fileds with key and IV
+        //Set package of class
         cu.setPackageDeclaration(pkgName);
+
+        //Imports needed by class
         cu.addImport("android.util.Base64;");
         cu.addImport("java.io.UnsupportedEncodingException;");
         cu.addImport("java.security.InvalidAlgorithmParameterException;");
@@ -38,6 +42,8 @@ public class DecryptionCreator {
         cu.addImport("javax.crypto.spec.IvParameterSpec");
         cu.addImport("javax.crypto.spec.SecretKeySpec");
 
+        //Sets class name
+        ClassOrInterfaceDeclaration classType = cu.addClass("Decryptor");
         //TODO: create decryption method stub and bodies
 
         System.out.println(cu.toString());
