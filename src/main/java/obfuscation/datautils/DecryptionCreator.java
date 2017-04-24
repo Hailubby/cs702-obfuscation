@@ -2,7 +2,12 @@ package obfuscation.datautils;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
+import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.FieldDeclaration;
+import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.type.Type;
+import com.sun.javafx.fxml.expression.VariableExpression;
 
 import java.util.ArrayList;
 
@@ -44,6 +49,10 @@ public class DecryptionCreator {
 
         //Sets class name
         ClassOrInterfaceDeclaration classType = cu.addClass("Decryptor");
+
+        //Adds key and init vector fields
+        FieldDeclaration keyField = classType.addField("String", "key = \"" + key + "\"", Modifier.PRIVATE);
+        FieldDeclaration ivField = classType.addField("String", "initVector = \"" + initVector + "\"", Modifier.PRIVATE);
         //TODO: create decryption method stub and bodies
 
         System.out.println(cu.toString());
