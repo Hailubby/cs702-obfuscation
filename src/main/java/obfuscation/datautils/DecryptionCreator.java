@@ -1,11 +1,9 @@
 package obfuscation.datautils;
 
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.ImportDeclaration;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 /**
  * Created by User on 24/04/2017.
@@ -28,6 +26,18 @@ public class DecryptionCreator {
 
         // TODO: set package name, initialise fileds with key and IV
         cu.setPackageDeclaration(pkgName);
+        cu.addImport("android.util.Base64;");
+        cu.addImport("java.io.UnsupportedEncodingException;");
+        cu.addImport("java.security.InvalidAlgorithmParameterException;");
+        cu.addImport("java.security.InvalidKeyException");
+        cu.addImport("java.security.NoSuchAlgorithmException;");
+        cu.addImport("javax.crypto.BadPaddingException;");
+        cu.addImport("javax.crypto.Cipher;");
+        cu.addImport("javax.crypto.IllegalBlockSizeException;");
+        cu.addImport("javax.crypto.NoSuchPaddingException;");
+        cu.addImport("javax.crypto.spec.IvParameterSpec");
+        cu.addImport("javax.crypto.spec.SecretKeySpec");
+
         //TODO: create decryption method stub and bodies
 
         System.out.println(cu.toString());
