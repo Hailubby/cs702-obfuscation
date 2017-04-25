@@ -110,11 +110,11 @@ public class DecryptionCreator {
         for(int i = 0; i < pkgList.size(); i++) {
             if (i == 0) {
                 pkgName = pkgList.get(i);
-                minLength = pkgName.split(".").length;
+                minLength = pkgName.split("\\.").length;
             } else {
-                if( pkgList.get(i).split(".").length < minLength) {
+                if( pkgList.get(i).split("\\.").length < minLength) {
                     pkgName = pkgList.get(i);
-                    minLength = pkgName.split(".").length;
+                    minLength = pkgName.split("\\.").length;
                 }
             }
         }
