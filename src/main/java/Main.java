@@ -21,6 +21,7 @@ public class Main {
         PackageVisitor pkgVisitor = new PackageVisitor();
 
         stringEncryptionVisitor.setKeyAndIv();
+        stringEncryptionVisitor.setHalves();
 
         File folder = new File(Main.class.getClass().getResource("/Original").toURI());
         cmdLineParser.findJavaFiles(folder);
@@ -35,7 +36,7 @@ public class Main {
                 stringEncryptionVisitor.visit(currentEntry.getValue(), null);
             }
 
-            DecryptionCreator decryptionCreator = new DecryptionCreator(stringEncryptionVisitor.getKey(), stringEncryptionVisitor.getInitVector(), pkgVisitor);
+            DecryptionCreator decryptionCreator = new DecryptionCreator(stringEncryptionVisitor.getKeyHalf1(), stringEncryptionVisitor.getKeyHalf2(), stringEncryptionVisitor.getIvHalf1(), stringEncryptionVisitor.getIvHalf2(), pkgVisitor);
             CompilationUnit decryptionCu = decryptionCreator.createDecryption();
             cuMap.put("Decryptor.java", decryptionCu);
             javaExporter.exportFile(cuMap);

@@ -97,4 +97,25 @@ public class EncryptionHelper {
 
         return new String(c);
     }
+
+    public String[] generateKeyHalves(String key) {
+        String[] keyHalves = new String[2];
+
+        byte[] randomHalf = new byte[key.length()];
+        byte[] matchingHalf = new byte[key.length()];
+        byte[] keyBytes = key.getBytes();
+
+        for (int i = 0; i < key.length(); i++) {
+            randomHalf[i] = (byte)(Math.random()*256);
+            matchingHalf[i] = (byte) (randomHalf[i] ^ keyBytes[i]);
+        }
+
+        keyHalves[0] = Base64.encodeBase64String(randomHalf);
+        keyHalves[1] = Base64.encodeBase64String(matchingHalf);
+
+        System.out.println("Random half: " + keyHalves[0]);
+        System.out.println("Matching half: " + keyHalves[1]);
+
+        return keyHalves;
+    }
 }

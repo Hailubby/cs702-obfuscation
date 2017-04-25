@@ -20,12 +20,16 @@ import java.util.EnumSet;
  */
 public class DecryptionCreator {
     private ArrayList<String> pkgList;
-    private String key;
-    private String initVector;
+    private String keyHalf1;
+    private String keyHalf2;
+    private String ivHalf1;
+    private String ivHalf2;
 
-    public DecryptionCreator(String key, String initVector, PackageVisitor pkgVisitor) {
-        this.key = key;
-        this.initVector = initVector;
+    public DecryptionCreator(String keyHalf1, String keyHalf2, String ivHalf1, String ivHalf2, PackageVisitor pkgVisitor) {
+        this.keyHalf1 = keyHalf1;
+        this.keyHalf2 = keyHalf2;
+        this.ivHalf1 = ivHalf1;
+        this.ivHalf2 = ivHalf2;
         this.pkgList = pkgVisitor.getPkgNames();
     }
 
@@ -47,8 +51,10 @@ public class DecryptionCreator {
         ClassOrInterfaceDeclaration classType = cu.addClass("Decryptor");
 
         //Adds key and init vector fields
-        FieldDeclaration keyField = classType.addField("String", "key = \"" + key + "\"", Modifier.PRIVATE);
-        FieldDeclaration ivField = classType.addField("String", "initVector = \"" + initVector + "\"", Modifier.PRIVATE);
+        FieldDeclaration keyHalf1Field = classType.addField("String", "keyHalf1 = \"" + keyHalf1 + "\"", Modifier.PRIVATE);
+        FieldDeclaration keyHalf2Field = classType.addField("String", "keyHalf2 = \"" + keyHalf2 + "\"", Modifier.PRIVATE);
+        FieldDeclaration ivHalf1Field = classType.addField("String", "ivHalf1 = \"" + ivHalf1 + "\"", Modifier.PRIVATE);
+        FieldDeclaration ivHalf2Field = classType.addField("String", "ivHalf2 = \"" + ivHalf2 + "\"", Modifier.PRIVATE);
 
         //TODO: create decryption method stub and bodies
         ClassOrInterfaceType decryptRetType = new ClassOrInterfaceType("String");
@@ -85,6 +91,7 @@ public class DecryptionCreator {
         catchList.add(catchClause);
         tryStmt.setCatchClauses(catchList);
 
+        //TODO return null statement - don't forget to add
 
         methodBlock.addStatement(tryStmt);
 
