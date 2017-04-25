@@ -20,21 +20,7 @@ public class Main {
         JavaExporter javaExporter = new JavaExporter();
         PackageVisitor pkgVisitor = new PackageVisitor();
 
-//        File sourceFile = new File(Main.class.getClass().getResource("/AppJavaSrc/com/jjhhh/dice/CustomDiceActivity.java").toURI());
-//        String fileName = "CustomDiceActivity.java";
-//
-//        //parse the file
-//        CompilationUnit compilationUnit = JavaParser.parse(sourceFile);
-//
-//        // prints the resulting compilation unit to default system output
-//        //System.out.println(compilationUnit.toString());
-//
-//        // visit and print the methods names
-//        new StringEncryptionVisitor().visit(compilationUnit, null);
-//        System.out.println(compilationUnit.toString());
-//
-//        javaExporter.exportFile(fileName, compilationUnit.toString());
-
+        stringEncryptionVisitor.setKeyAndIv();
 
         File folder = new File(Main.class.getClass().getResource("/Original").toURI());
         cmdLineParser.findJavaFiles(folder);
@@ -46,13 +32,13 @@ public class Main {
             while (entries.hasNext()) {
                 Map.Entry<String, CompilationUnit> currentEntry = entries.next();
                 pkgVisitor.visit(currentEntry.getValue(), null);
-                //stringEncryptionVisitor.visit(currentEntry.getValue(), null);
-                //System.out.println(currentEntry.getValue().toString());
+                stringEncryptionVisitor.visit(currentEntry.getValue(), null);
             }
 
             DecryptionCreator decryptionCreator = new DecryptionCreator(stringEncryptionVisitor.getKey(), stringEncryptionVisitor.getInitVector(), pkgVisitor);
-            decryptionCreator.createDecryption();
-            //javaExporter.exportFile(cuMap);
+            CompilationUnit decryptionCu = decryptionCreator.createDecryption();
+            cuMap.put("Decryptor.java", decryptionCu);
+            javaExporter.exportFile(cuMap);
         }
         else {
             System.out.println("No Java files located in folder to obfuscate");

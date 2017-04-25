@@ -9,15 +9,19 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Arrays;
 
 /**
  * Created by User on 20/04/2017.
  */
 public class EncryptionHelper {
+    private char[] symbol = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
+
     public String encrypt(String key, String initVector, String string){
         try {
             IvParameterSpec iv = new IvParameterSpec(initVector.getBytes("UTF-8"));
@@ -81,5 +85,16 @@ public class EncryptionHelper {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public String generateString(int length){
+        char[] c = new char[length];
+
+        for (int i = 0; i < length; i++){
+            int num = (int)Math.floor(Math.random() * 62);
+            c[i] = symbol[num];
+        }
+
+        return new String(c);
     }
 }

@@ -92,7 +92,6 @@ public class DecryptionCreator {
 
         classType.addMember(decryptMethod);
 
-        System.out.println(cu.toString());
         return cu;
     }
 
