@@ -1,9 +1,10 @@
 import com.github.javaparser.ast.CompilationUnit;
+import obfuscation.datautils.ClassNameGenerator;
 import obfuscation.datautils.DecryptionCreator;
 import obfuscation.datautils.PackageVisitor;
 import obfuscation.datautils.StringEncryptionVisitor;
 import utilities.CommandLineParser;
-import utilities.JavaExporter;
+import utilities.Exporter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
@@ -17,8 +18,9 @@ public class Main {
     public static void main(String[] args) throws FileNotFoundException, URISyntaxException {
         CommandLineParser cmdLineParser = new CommandLineParser();
         StringEncryptionVisitor stringEncryptionVisitor = new StringEncryptionVisitor();
-        JavaExporter javaExporter = new JavaExporter();
+        Exporter exporter = new Exporter();
         PackageVisitor pkgVisitor = new PackageVisitor();
+        ClassNameGenerator classNameGenerator = new ClassNameGenerator();
 
         stringEncryptionVisitor.setKeyAndIv();
         stringEncryptionVisitor.setHalves();
@@ -34,12 +36,16 @@ public class Main {
                 Map.Entry<String, CompilationUnit> currentEntry = entries.next();
                 pkgVisitor.visit(currentEntry.getValue(), null);
                 stringEncryptionVisitor.visit(currentEntry.getValue(), null);
+                classNameGenerator.visit(currentEntry.getValue(), null);
             }
+
+            HashMap<String, String> classNamesMap = classNameGenerator.getClassNamesMap();
 
             DecryptionCreator decryptionCreator = new DecryptionCreator(stringEncryptionVisitor.getKeyHalf1(), stringEncryptionVisitor.getKeyHalf2(), stringEncryptionVisitor.getIvHalf1(), stringEncryptionVisitor.getIvHalf2(), pkgVisitor);
             CompilationUnit decryptionCu = decryptionCreator.createDecryption();
             cuMap.put("Decryptor.java", decryptionCu);
-            javaExporter.exportFile(cuMap);
+            exporter.exportJavaFile(cuMap);
+            exporter.exportTxtFile(classNamesMap);
         }
         else {
             System.out.println("No Java files located in folder to obfuscate");

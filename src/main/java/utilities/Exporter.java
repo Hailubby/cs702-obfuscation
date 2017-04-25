@@ -11,9 +11,9 @@ import java.util.Map;
 /**
  * Created by User on 20/04/2017.
  */
-public class JavaExporter {
+public class Exporter {
 
-    public void exportFile(HashMap<String, CompilationUnit> cuMap) {
+    public void exportJavaFile(HashMap<String, CompilationUnit> cuMap) {
         PrintWriter out = null;
 
         Iterator<Map.Entry<String, CompilationUnit>> entries = cuMap.entrySet().iterator();
@@ -28,5 +28,22 @@ public class JavaExporter {
                 out.close();
             }
         }
+    }
+
+    public void exportTxtFile(HashMap<String, String> classNamesMap) {
+        PrintWriter out = null;
+        try {
+            out = new PrintWriter("GeneratedClassNames.txt");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        Iterator<Map.Entry<String, String>> entries = classNamesMap.entrySet().iterator();
+        while (entries.hasNext()) {
+            Map.Entry<String, String> currentEntry = entries.next();
+            out.println(currentEntry.getKey() + " = " + currentEntry.getValue().toString());
+        }
+
+        out.close();
     }
 }
