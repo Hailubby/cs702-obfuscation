@@ -31,8 +31,8 @@ public class StringEncryptionVisitor  extends VoidVisitorAdapter<Void>{
     public void setKeyAndIv(){
         this.key = encryptionHelper.generateString(16);
         this.initVector = encryptionHelper.generateString(16);
-        System.out.println("Generated key: " + this.key);
-        System.out.println("Generated iv: " + this.initVector);
+//        System.out.println("Generated key: " + this.key);
+//        System.out.println("Generated iv: " + this.initVector);
     }
 
     public void setHalves(){
