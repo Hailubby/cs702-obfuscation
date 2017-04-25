@@ -3,13 +3,14 @@ package obfuscation.datautils;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Modifier;
-import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
-import com.github.javaparser.ast.body.FieldDeclaration;
-import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.body.*;
+import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.Type;
 import com.sun.javafx.fxml.expression.VariableExpression;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 
 /**
  * Created by User on 24/04/2017.
@@ -30,20 +31,12 @@ public class DecryptionCreator {
         CompilationUnit cu = new CompilationUnit();
         String pkgName = findPkgName();
 
-        // TODO: set package name, initialise fileds with key and IV
         //Set package of class
         cu.setPackageDeclaration(pkgName);
 
         //Imports needed by class
         cu.addImport("android.util.Base64;");
-        cu.addImport("java.io.UnsupportedEncodingException;");
-        cu.addImport("java.security.InvalidAlgorithmParameterException;");
-        cu.addImport("java.security.InvalidKeyException");
-        cu.addImport("java.security.NoSuchAlgorithmException;");
-        cu.addImport("javax.crypto.BadPaddingException;");
         cu.addImport("javax.crypto.Cipher;");
-        cu.addImport("javax.crypto.IllegalBlockSizeException;");
-        cu.addImport("javax.crypto.NoSuchPaddingException;");
         cu.addImport("javax.crypto.spec.IvParameterSpec");
         cu.addImport("javax.crypto.spec.SecretKeySpec");
 
@@ -53,7 +46,26 @@ public class DecryptionCreator {
         //Adds key and init vector fields
         FieldDeclaration keyField = classType.addField("String", "key = \"" + key + "\"", Modifier.PRIVATE);
         FieldDeclaration ivField = classType.addField("String", "initVector = \"" + initVector + "\"", Modifier.PRIVATE);
+
         //TODO: create decryption method stub and bodies
+        ClassOrInterfaceType decryptRetType = new ClassOrInterfaceType("String");
+        EnumSet<Modifier> modifiers = EnumSet.of(Modifier.PUBLIC);
+        MethodDeclaration decryptMethod = new MethodDeclaration(modifiers, decryptRetType, "decrypt");
+        decryptMethod.addAndGetParameter(String.class, "encryptedString");
+
+        //TODO surround in try and catch statement
+        BlockStmt block = new BlockStmt();
+        block.addStatement("IvParameterSpec iv = new IvParameterSpec(initVector.getBytes(\"UTF-8\"));");
+        block.addStatement("SecretKeySpec secretKeySpec = new SecretKeySpec(key.getBytes(\"UTF-8\"), \"AES\");");
+        block.addStatement("Cipher cipher = Cipher.getInstance(\"AES/CBC/PKCS5PADDING\");");
+        block.addStatement("cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, iv);");
+        block.addStatement("byte[] decodedString = Base64.decode(encryptedString, Base64.DEFAULT);");
+        block.addStatement("byte[] decryptedBytes = cipher.doFinal(decodedString);");
+        block.addStatement("String decryptedString = new String(decryptedBytes);");
+        block.addStatement("return decryptedString;");
+        decryptMethod.setBody(block);
+
+        classType.addMember(decryptMethod);
 
         System.out.println(cu.toString());
         return cu;
