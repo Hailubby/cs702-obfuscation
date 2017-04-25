@@ -3,8 +3,11 @@ package obfuscation.datautils;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Modifier;
+import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.stmt.CatchClause;
+import com.github.javaparser.ast.stmt.TryStmt;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.Type;
 import com.sun.javafx.fxml.expression.VariableExpression;
@@ -54,16 +57,38 @@ public class DecryptionCreator {
         decryptMethod.addAndGetParameter(String.class, "encryptedString");
 
         //TODO surround in try and catch statement
-        BlockStmt block = new BlockStmt();
-        block.addStatement("IvParameterSpec iv = new IvParameterSpec(initVector.getBytes(\"UTF-8\"));");
-        block.addStatement("SecretKeySpec secretKeySpec = new SecretKeySpec(key.getBytes(\"UTF-8\"), \"AES\");");
-        block.addStatement("Cipher cipher = Cipher.getInstance(\"AES/CBC/PKCS5PADDING\");");
-        block.addStatement("cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, iv);");
-        block.addStatement("byte[] decodedString = Base64.decode(encryptedString, Base64.DEFAULT);");
-        block.addStatement("byte[] decryptedBytes = cipher.doFinal(decodedString);");
-        block.addStatement("String decryptedString = new String(decryptedBytes);");
-        block.addStatement("return decryptedString;");
-        decryptMethod.setBody(block);
+        BlockStmt methodBlock = new BlockStmt();
+
+        TryStmt tryStmt = new TryStmt();
+        BlockStmt tryBlock = new BlockStmt();
+        tryBlock.addStatement("IvParameterSpec iv = new IvParameterSpec(initVector.getBytes(\"UTF-8\"));");
+        tryBlock.addStatement("SecretKeySpec secretKeySpec = new SecretKeySpec(key.getBytes(\"UTF-8\"), \"AES\");");
+        tryBlock.addStatement("Cipher cipher = Cipher.getInstance(\"AES/CBC/PKCS5PADDING\");");
+        tryBlock.addStatement("cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, iv);");
+        tryBlock.addStatement("byte[] decodedString = Base64.decode(encryptedString, Base64.DEFAULT);");
+        tryBlock.addStatement("byte[] decryptedBytes = cipher.doFinal(decodedString);");
+        tryBlock.addStatement("String decryptedString = new String(decryptedBytes);");
+        tryBlock.addStatement("return decryptedString;");
+
+        tryStmt.setTryBlock(tryBlock);
+
+        BlockStmt catchBlock1 = new BlockStmt();
+
+        ClassOrInterfaceType exceptionType = new ClassOrInterfaceType("Exception");
+        Parameter parameter = new Parameter(exceptionType, "e");
+        CatchClause catchClause = new CatchClause(parameter, catchBlock1);
+        BlockStmt catchBlock2 = new BlockStmt();
+        catchBlock2.addStatement("e.printStackTrace();");
+        catchClause.setBody(catchBlock2);
+
+        NodeList catchList = new NodeList();
+        catchList.add(catchClause);
+        tryStmt.setCatchClauses(catchList);
+
+
+        methodBlock.addStatement(tryStmt);
+
+        decryptMethod.setBody(methodBlock);
 
         classType.addMember(decryptMethod);
 
