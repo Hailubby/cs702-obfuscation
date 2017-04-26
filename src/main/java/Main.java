@@ -1,5 +1,7 @@
 import com.github.javaparser.ast.CompilationUnit;
-import obfuscation.datautils.*;
+import obfuscation.DecryptionCreator;
+import obfuscation.PackageVisitor;
+import obfuscation.StringEncryptionVisitor;
 import utilities.CommandLineParser;
 import utilities.Exporter;
 import java.io.File;
@@ -17,7 +19,6 @@ public class Main {
         StringEncryptionVisitor stringEncryptionVisitor = new StringEncryptionVisitor();
         Exporter exporter = new Exporter();
         PackageVisitor pkgVisitor = new PackageVisitor();
-        ClassNameGenerator classNameGenerator = new ClassNameGenerator();
 
         stringEncryptionVisitor.setKeyAndIv();
         stringEncryptionVisitor.setHalves();
@@ -34,26 +35,15 @@ public class Main {
                 Map.Entry<String, CompilationUnit> currentEntry = entries.next();
                 pkgVisitor.visit(currentEntry.getValue(), null);
                 stringEncryptionVisitor.visit(currentEntry.getValue(), null);
-                classNameGenerator.visit(currentEntry.getValue(), null);
             }
 
-            ClassRefactor classRefactor = new ClassRefactor(classNameGenerator.getClassNamesMap());
-
-            entries = cuMap.entrySet().iterator();
-            while (entries.hasNext()) {
-                Map.Entry<String, CompilationUnit> currentEntry = entries.next();
-                classRefactor.visit(currentEntry.getValue(), null);
-            }
-
-            HashMap<String, String> classNamesMap = classNameGenerator.getClassNamesMap();
 
             DecryptionCreator decryptionCreator = new DecryptionCreator(stringEncryptionVisitor.getKeyHalf1(), stringEncryptionVisitor.getKeyHalf2(), stringEncryptionVisitor.getIvHalf1(), stringEncryptionVisitor.getIvHalf2(), pkgVisitor);
             CompilationUnit decryptionCu = decryptionCreator.createDecryption();
 
-            //System.out.println(decryptionCu.toString());
             cuMap.put("Decryptor.java", decryptionCu);
-            exporter.exportJavaFile(cuMap, classNameGenerator.getClassNamesMap());
-            exporter.exportTxtFile(classNameGenerator.getClassNamesMap());
+            exporter.exportJavaFile(cuMap);
+
         }
         else {
             System.out.println("No Java files located in folder to obfuscate");

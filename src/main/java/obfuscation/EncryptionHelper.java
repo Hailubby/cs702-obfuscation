@@ -1,4 +1,4 @@
-package obfuscation.datautils;
+package obfuscation;
 
 import org.apache.commons.codec.binary.Base64;
 

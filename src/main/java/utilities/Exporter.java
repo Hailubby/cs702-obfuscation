@@ -13,18 +13,14 @@ import java.util.Map;
  */
 public class Exporter {
 
-    public void exportJavaFile(HashMap<String, CompilationUnit> cuMap, HashMap<String, String> classNamesMap) {
+    public void exportJavaFile(HashMap<String, CompilationUnit> cuMap) {
         PrintWriter out = null;
-
 
         Iterator<Map.Entry<String, CompilationUnit>> entries = cuMap.entrySet().iterator();
         while (entries.hasNext()) {
             Map.Entry<String, CompilationUnit> currentEntry = entries.next();
             try {
-                //TODO move to general obfuscation
-                String oldName = currentEntry.getKey().split("\\.")[0];
-                String newName = classNamesMap.get(oldName) + ".java";
-                out = new PrintWriter(newName);
+                out = new PrintWriter(currentEntry.getKey());
                 out.println(currentEntry.getValue().toString());
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -34,20 +30,4 @@ public class Exporter {
         }
     }
 
-    public void exportTxtFile(HashMap<String, String> classNamesMap) {
-        PrintWriter out = null;
-        try {
-            out = new PrintWriter("GeneratedClassNames.txt");
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        Iterator<Map.Entry<String, String>> entries = classNamesMap.entrySet().iterator();
-        while (entries.hasNext()) {
-            Map.Entry<String, String> currentEntry = entries.next();
-            out.println(currentEntry.getKey() + " = " + currentEntry.getValue().toString());
-        }
-
-        out.close();
-    }
 }

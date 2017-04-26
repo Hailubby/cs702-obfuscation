@@ -1,4 +1,4 @@
-package obfuscation.datautils;
+package obfuscation;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.PackageDeclaration;

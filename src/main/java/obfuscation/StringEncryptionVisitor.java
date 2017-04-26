@@ -1,12 +1,7 @@
-package obfuscation.datautils;
+package obfuscation;
 
 import com.github.javaparser.ast.expr.StringLiteralExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-import org.apache.commons.codec.binary.Base64;
-
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-import java.security.NoSuchAlgorithmException;
 
 /**
  * Simple visitor implementation for visiting String Literal Expressions nodes and encrypts them
