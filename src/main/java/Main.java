@@ -34,7 +34,7 @@ public class Main {
             while (entries.hasNext()) {
                 Map.Entry<String, CompilationUnit> currentEntry = entries.next();
                 pkgVisitor.visit(currentEntry.getValue(), null);
-//                stringEncryptionVisitor.visit(currentEntry.getValue(), null);
+                stringEncryptionVisitor.visit(currentEntry.getValue(), null);
             }
 
 
@@ -43,8 +43,8 @@ public class Main {
 
             System.out.println(decryptionCu.toString());
 
-//            cuMap.put("Decryptor.java", decryptionCu);
-//            exporter.exportJavaFile(cuMap);
+            cuMap.put("Decryptor.java", decryptionCu);
+            exporter.exportJavaFile(cuMap);
 
         }
         else {

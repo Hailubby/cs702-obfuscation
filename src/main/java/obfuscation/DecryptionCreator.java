@@ -2,13 +2,12 @@ package obfuscation;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Modifier;
+import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.*;
+import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.NameExpr;
-import com.github.javaparser.ast.stmt.BlockStmt;
-import com.github.javaparser.ast.stmt.CatchClause;
-import com.github.javaparser.ast.stmt.IfStmt;
-import com.github.javaparser.ast.stmt.TryStmt;
+import com.github.javaparser.ast.stmt.*;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 
 import java.util.ArrayList;
@@ -123,7 +122,32 @@ public class DecryptionCreator {
 
         getOrigMethodBlock.addStatement(ifStmt);
 
-        //TODO add for loop of code
+        getOrigMethodBlock.addStatement("byte[] key = new byte[half1.length];");
+
+        //For block, xor.
+        ForStmt forStmt = new ForStmt();
+
+        NodeList<Expression> initialisation = new NodeList<>();
+        NameExpr initExpr = new NameExpr("int i = 0");
+        initialisation.add(initExpr);
+        forStmt.setInitialization(initialisation);
+
+        NameExpr compareExpr = new NameExpr("i < half1.length");
+        forStmt.setCompare(compareExpr);
+
+        NodeList<Expression> update = new NodeList<>();
+        NameExpr updateExpr = new NameExpr("i++");
+        update.add(updateExpr);
+        forStmt.setUpdate(update);
+
+        BlockStmt forBlock = new BlockStmt();
+        forBlock.addStatement("key[i] = (byte) (half1[i] ^ half2[i]);");
+        forStmt.setBody(forBlock);
+
+        getOrigMethodBlock.addStatement(forStmt);
+
+        getOrigMethodBlock.addStatement("return new String(key);");
+
         getOriginalMethod.setBody(getOrigMethodBlock);
 
         classType.addMember(getOriginalMethod);
