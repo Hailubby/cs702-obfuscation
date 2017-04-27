@@ -34,15 +34,17 @@ public class Main {
             while (entries.hasNext()) {
                 Map.Entry<String, CompilationUnit> currentEntry = entries.next();
                 pkgVisitor.visit(currentEntry.getValue(), null);
-                stringEncryptionVisitor.visit(currentEntry.getValue(), null);
+//                stringEncryptionVisitor.visit(currentEntry.getValue(), null);
             }
 
 
             DecryptionCreator decryptionCreator = new DecryptionCreator(stringEncryptionVisitor.getKeyHalf1(), stringEncryptionVisitor.getKeyHalf2(), stringEncryptionVisitor.getIvHalf1(), stringEncryptionVisitor.getIvHalf2(), pkgVisitor);
             CompilationUnit decryptionCu = decryptionCreator.createDecryption();
 
-            cuMap.put("Decryptor.java", decryptionCu);
-            exporter.exportJavaFile(cuMap);
+            System.out.println(decryptionCu.toString());
+
+//            cuMap.put("Decryptor.java", decryptionCu);
+//            exporter.exportJavaFile(cuMap);
 
         }
         else {

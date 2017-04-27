@@ -4,8 +4,10 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.*;
+import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.CatchClause;
+import com.github.javaparser.ast.stmt.IfStmt;
 import com.github.javaparser.ast.stmt.TryStmt;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 
@@ -48,24 +50,23 @@ public class DecryptionCreator {
         ClassOrInterfaceDeclaration classType = cu.addClass("Decryptor");
 
         //Adds key and init vector fields
-        FieldDeclaration keyHalf1Field = classType.addField("String", "keyHalf1 = \"" + keyHalf1 + "\"", Modifier.PRIVATE);
-        FieldDeclaration keyHalf2Field = classType.addField("String", "keyHalf2 = \"" + keyHalf2 + "\"", Modifier.PRIVATE);
-        FieldDeclaration ivHalf1Field = classType.addField("String", "ivHalf1 = \"" + ivHalf1 + "\"", Modifier.PRIVATE);
-        FieldDeclaration ivHalf2Field = classType.addField("String", "ivHalf2 = \"" + ivHalf2 + "\"", Modifier.PRIVATE);
+        FieldDeclaration keyHalvesField = classType.addField("String[]", "keyHalves = {\"" + keyHalf1 + "\", \"" + keyHalf2 + "\"}", Modifier.PRIVATE);
+        FieldDeclaration ivHalvesField = classType.addField("String[]", "ivHalves = {\"" + ivHalf1 + "\", \"" + ivHalf2 + "\"}", Modifier.PRIVATE);
 
         //TODO: create decryption method stub and bodies
-        ClassOrInterfaceType decryptRetType = new ClassOrInterfaceType("String");
-        EnumSet<Modifier> modifiers = EnumSet.of(Modifier.PUBLIC);
-        MethodDeclaration decryptMethod = new MethodDeclaration(modifiers, decryptRetType, "decrypt");
+
+        //Decrypt Method
+        ClassOrInterfaceType stringRetType = new ClassOrInterfaceType("String");
+        EnumSet<Modifier> decryptModifiers = EnumSet.of(Modifier.PUBLIC);
+        MethodDeclaration decryptMethod = new MethodDeclaration(decryptModifiers, stringRetType, "decrypt");
         decryptMethod.addAndGetParameter(String.class, "encryptedString");
 
-        //TODO surround in try and catch statement
-        BlockStmt methodBlock = new BlockStmt();
+        BlockStmt decryptMethodBlock = new BlockStmt();
 
         TryStmt tryStmt = new TryStmt();
         BlockStmt tryBlock = new BlockStmt();
-        tryBlock.addStatement("IvParameterSpec iv = new IvParameterSpec(initVector.getBytes(\"UTF-8\"));");
-        tryBlock.addStatement("SecretKeySpec secretKeySpec = new SecretKeySpec(key.getBytes(\"UTF-8\"), \"AES\");");
+        tryBlock.addStatement("IvParameterSpec iv = new IvParameterSpec(getOriginal(0).getBytes(\"UTF-8\"));");
+        tryBlock.addStatement("SecretKeySpec secretKeySpec = new SecretKeySpec(getOriginal(1).getBytes(\"UTF-8\"), \"AES\");");
         tryBlock.addStatement("Cipher cipher = Cipher.getInstance(\"AES/CBC/PKCS5PADDING\");");
         tryBlock.addStatement("cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, iv);");
         tryBlock.addStatement("byte[] decodedString = Base64.decode(encryptedString, Base64.DEFAULT);");
@@ -88,13 +89,44 @@ public class DecryptionCreator {
         catchList.add(catchClause);
         tryStmt.setCatchClauses(catchList);
 
-        //TODO return null statement - don't forget to add
+        decryptMethodBlock.addStatement(tryStmt);
+        decryptMethodBlock.addStatement("return null;");
 
-        methodBlock.addStatement(tryStmt);
-
-        decryptMethod.setBody(methodBlock);
+        decryptMethod.setBody(decryptMethodBlock);
 
         classType.addMember(decryptMethod);
+
+        //getOriginal method
+        EnumSet<Modifier> getOriginalModifiers = EnumSet.of(Modifier.PRIVATE);
+        MethodDeclaration getOriginalMethod = new MethodDeclaration(getOriginalModifiers, stringRetType, "getOriginal");
+        getOriginalMethod.addAndGetParameter(int.class, "mode");
+
+        BlockStmt getOrigMethodBlock = new BlockStmt();
+
+        getOrigMethodBlock.addStatement("byte[] half1;");
+        getOrigMethodBlock.addStatement("byte[] half2;");
+
+        IfStmt ifStmt = new IfStmt();
+        NameExpr ifCondition = new NameExpr("mode == 0");
+        ifStmt.setCondition(ifCondition);
+
+        BlockStmt ifBlock = new BlockStmt();
+        ifBlock.addStatement("half1 = Base64.decode(ivHalves[0], 0);");
+        ifBlock.addStatement("half2 = Base64.decode(ivHalves[1], 0);");
+
+        ifStmt.setThenStmt(ifBlock);
+
+        BlockStmt elseBlock = new BlockStmt();
+        elseBlock.addStatement("half1 = Base64.decode(keyHalves[0], 0);");
+        elseBlock.addStatement("half2 = Base64.decode(keyHalves[1], 0);");
+        ifStmt.setElseStmt(elseBlock);
+
+        getOrigMethodBlock.addStatement(ifStmt);
+
+        //TODO add for loop of code
+        getOriginalMethod.setBody(getOrigMethodBlock);
+
+        classType.addMember(getOriginalMethod);
 
         return cu;
     }
