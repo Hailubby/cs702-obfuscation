@@ -49,8 +49,8 @@ public class DecryptionCreator {
         ClassOrInterfaceDeclaration classType = cu.addClass("Decryptor");
 
         //Adds key and init vector fields
-        FieldDeclaration keyHalvesField = classType.addField("String[]", "keyHalves = {\"" + keyHalf1 + "\", \"" + keyHalf2 + "\"}", Modifier.PRIVATE);
-        FieldDeclaration ivHalvesField = classType.addField("String[]", "ivHalves = {\"" + ivHalf1 + "\", \"" + ivHalf2 + "\"}", Modifier.PRIVATE);
+        classType.addField("String[]", "keyHalves = {\"" + keyHalf1 + "\", \"" + keyHalf2 + "\"}", Modifier.PRIVATE);
+        classType.addField("String[]", "ivHalves = {\"" + ivHalf1 + "\", \"" + ivHalf2 + "\"}", Modifier.PRIVATE);
 
         //TODO: create decryption method stub and bodies
 
@@ -155,7 +155,7 @@ public class DecryptionCreator {
         return cu;
     }
 
-    //Finds highest level package of existing classes
+    //Finds highest level package of existing classes from arraylist of package names
     private String findPkgName(){
         String pkgName = "";
         int minLength = 0;

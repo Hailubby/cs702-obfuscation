@@ -17,12 +17,14 @@ public class Main {
     public static void main(String[] args) throws FileNotFoundException, URISyntaxException {
         CommandLineParser cmdLineParser = new CommandLineParser();
         StringEncryptionVisitor stringEncryptionVisitor = new StringEncryptionVisitor();
-        Exporter exporter = new Exporter();
         PackageVisitor pkgVisitor = new PackageVisitor();
+        Exporter exporter = new Exporter();
 
+        //Set up Key and initialisation vectors to be used for encryption
         stringEncryptionVisitor.setKeyAndIv();
         stringEncryptionVisitor.setHalves();
 
+        //TODO ask user to input path to folder containing java files to obfuscate. change method params to string instead of File.
         File folder = new File(Main.class.getClass().getResource("/Original").toURI());
         cmdLineParser.findJavaFiles(folder);
 
@@ -40,8 +42,6 @@ public class Main {
 
             DecryptionCreator decryptionCreator = new DecryptionCreator(stringEncryptionVisitor.getKeyHalf1(), stringEncryptionVisitor.getKeyHalf2(), stringEncryptionVisitor.getIvHalf1(), stringEncryptionVisitor.getIvHalf2(), pkgVisitor);
             CompilationUnit decryptionCu = decryptionCreator.createDecryption();
-
-            System.out.println(decryptionCu.toString());
 
             cuMap.put("Decryptor.java", decryptionCu);
             exporter.exportJavaFile(cuMap);

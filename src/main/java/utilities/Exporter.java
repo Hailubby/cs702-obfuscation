@@ -13,6 +13,7 @@ import java.util.Map;
  */
 public class Exporter {
 
+    //Prints each compilation unit to files with their respective java file names
     public void exportJavaFile(HashMap<String, CompilationUnit> cuMap) {
         PrintWriter out = null;
 

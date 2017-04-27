@@ -22,6 +22,7 @@ import java.util.Arrays;
 public class EncryptionHelper {
     private char[] symbol = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
 
+    //Encryption method
     public String encrypt(String key, String initVector, String string){
         try {
             IvParameterSpec iv = new IvParameterSpec(initVector.getBytes("UTF-8"));
@@ -32,9 +33,6 @@ public class EncryptionHelper {
 
             byte[] encrypted = cipher.doFinal(string.getBytes());
             String encodedString = new String(Base64.encodeBase64(encrypted));
-
-//            System.out.println("encrypted string: " + Arrays.toString(encrypted));
-//            System.out.println("encrypted and encoded string: " + encodedString);
 
             return encodedString;
         } catch (UnsupportedEncodingException e) {
@@ -55,6 +53,7 @@ public class EncryptionHelper {
         return null;
     }
 
+    //Testing decryption. Moved to android code, kept in this tool for reference and testing
     public String decrypt(String key, String initVector, String encryptedString) throws NoSuchPaddingException, NoSuchAlgorithmException {
         try {
             IvParameterSpec iv = new IvParameterSpec(initVector.getBytes("UTF-8"));
@@ -68,9 +67,6 @@ public class EncryptionHelper {
             byte[] decryptedBytes = cipher.doFinal(decodedString);
 
             String decryptedString = new String(decryptedBytes);
-
-//            System.out.println("decrypted string: " + Arrays.toString(decryptedBytes));
-//            System.out.println("decrypted and decoded string: " + decryptedString);
 
             return decryptedString;
         } catch (UnsupportedEncodingException e) {
@@ -87,6 +83,7 @@ public class EncryptionHelper {
         return null;
     }
 
+    //Generates random string of specified length
     public String generateString(int length){
         char[] c = new char[length];
 
@@ -98,6 +95,7 @@ public class EncryptionHelper {
         return new String(c);
     }
 
+    //Generates xor halves
     public String[] generateKeyHalves(String key) {
         String[] keyHalves = new String[2];
 
@@ -112,9 +110,6 @@ public class EncryptionHelper {
 
         keyHalves[0] = Base64.encodeBase64String(randomHalf);
         keyHalves[1] = Base64.encodeBase64String(matchingHalf);
-
-        System.out.println("Random half: " + keyHalves[0]);
-        System.out.println("Matching half: " + keyHalves[1]);
 
         return keyHalves;
     }

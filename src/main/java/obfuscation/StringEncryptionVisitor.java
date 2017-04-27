@@ -15,6 +15,7 @@ public class StringEncryptionVisitor  extends VoidVisitorAdapter<Void>{
     private String ivHalf1 = "";
     private String ivHalf2 = "";
 
+    //Visits all strings in the compilation unit and calls encryption method on it
     @Override
     public void visit(StringLiteralExpr s, Void arg) {
         String encryptedString = encryptionHelper.encrypt(key, initVector, s.getValue());
@@ -26,10 +27,9 @@ public class StringEncryptionVisitor  extends VoidVisitorAdapter<Void>{
     public void setKeyAndIv(){
         this.key = encryptionHelper.generateString(16);
         this.initVector = encryptionHelper.generateString(16);
-//        System.out.println("Generated key: " + this.key);
-//        System.out.println("Generated iv: " + this.initVector);
     }
 
+    //Creates two xor halves each for key and iv
     public void setHalves(){
         String[] keyHalves = encryptionHelper.generateKeyHalves(this.key);
         this.keyHalf1 = keyHalves[0];
@@ -38,14 +38,6 @@ public class StringEncryptionVisitor  extends VoidVisitorAdapter<Void>{
         String[] ivHalves = encryptionHelper.generateKeyHalves(this.initVector);
         this.ivHalf1 = ivHalves[0];
         this.ivHalf2 = ivHalves[1];
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public String getInitVector() {
-        return initVector;
     }
 
     public String getKeyHalf1() {
