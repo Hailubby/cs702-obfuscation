@@ -15,7 +15,6 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.jjhhh.dice.Models.DiceCount;
 import com.jjhhh.dice.Models.DiceRolls;
 
@@ -25,9 +24,13 @@ import com.jjhhh.dice.Models.DiceRolls;
 public class StandardDiceActivity extends AppCompatActivity {
 
     DiceRollService mDiceRollService;
+
     DiceCounterService mDiceCounterService;
+
     boolean mDiceRollServiceBound = false;
+
     boolean mDiceCounterServiceBound;
+
     DiceRolls diceRolls = new DiceRolls();
 
     @Override
@@ -37,7 +40,6 @@ public class StandardDiceActivity extends AppCompatActivity {
         // Storing references to different UI elements on activity
         final Button rollButton = (Button) findViewById(R.id.rollButton);
         final TextView rollNumber = (TextView) findViewById(R.id.rollNumber);
-
         // How many of a dice are to be rolled
         final TextView diceFourNum = (TextView) findViewById(R.id.dice4Num);
         final TextView diceSixNum = (TextView) findViewById(R.id.dice6Num);
@@ -45,7 +47,6 @@ public class StandardDiceActivity extends AppCompatActivity {
         final TextView diceTenNum = (TextView) findViewById(R.id.dice10Num);
         final TextView diceTwelveNum = (TextView) findViewById(R.id.dice12Num);
         final TextView diceTwentyNum = (TextView) findViewById(R.id.dice20Num);
-
         // Types of dice
         final ImageButton diceFourButton = (ImageButton) findViewById(R.id.dice4);
         final ImageButton diceSixButton = (ImageButton) findViewById(R.id.dice6);
@@ -53,23 +54,20 @@ public class StandardDiceActivity extends AppCompatActivity {
         final ImageButton diceTenButton = (ImageButton) findViewById(R.id.dice10);
         final ImageButton diceTwelveButton = (ImageButton) findViewById(R.id.dice12);
         final ImageButton diceTwentyButton = (ImageButton) findViewById(R.id.dice20);
-
         final LinearLayout rollLogPane = (LinearLayout) findViewById(R.id.rollLogPane);
-
         // Listen for pressing roll button
         rollButton.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
                 // If service to roll is bound (set up)
-                if(mDiceRollServiceBound && mDiceCounterServiceBound) {
+                if (mDiceRollServiceBound && mDiceCounterServiceBound) {
                     // Use service to roll all dice
                     diceRolls = mDiceRollService.rollDice(mDiceCounterService.getAllDice());
                     // Set main number to be the total number rolled
                     rollNumber.setText(Integer.toString(diceRolls.getSum()));
-
                     // Remove all logs of previous rolls
                     removeAllChildren(rollLogPane);
-
                     // Make layout for roll log text to take (eg. font, position)
                     LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                     // For every dice rolled
@@ -79,16 +77,16 @@ public class StandardDiceActivity extends AppCompatActivity {
                         rollLogEntry.setTextSize(15);
                         rollLogEntry.setLayoutParams(lp);
                         // Set text to type of dice (number of sides) and actual roll
-                        rollLogEntry.setText("d" + d.getDie() + ": " + d.getCount());
+                        rollLogEntry.setText("RdTUAPVHUnq8jxcc91Ey5Q==" + d.getDie() + "lhB862BivahU0tQOMfnGvA==" + d.getCount());
                         // Add roll to log
                         rollLogPane.addView(rollLogEntry);
                     }
                 }
             }
         });
-
         // Listeners for all dice buttons
         diceFourButton.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
                 // Add the clicked dice type to list of dice to roll
@@ -97,6 +95,7 @@ public class StandardDiceActivity extends AppCompatActivity {
             }
         });
         diceSixButton.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
                 mDiceCounterService.addDice(6);
@@ -104,6 +103,7 @@ public class StandardDiceActivity extends AppCompatActivity {
             }
         });
         diceEightButton.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
                 mDiceCounterService.addDice(8);
@@ -111,6 +111,7 @@ public class StandardDiceActivity extends AppCompatActivity {
             }
         });
         diceTenButton.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
                 mDiceCounterService.addDice(10);
@@ -118,14 +119,15 @@ public class StandardDiceActivity extends AppCompatActivity {
             }
         });
         diceTwelveButton.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
                 mDiceCounterService.addDice(12);
                 diceTwelveNum.setText(Integer.toString(mDiceCounterService.getDice(12)));
-
             }
         });
         diceTwentyButton.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
                 mDiceCounterService.addDice(20);
@@ -139,11 +141,11 @@ public class StandardDiceActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         // Start a service for rolling dice
-        Intent diceRollIntent  = new Intent(this, DiceRollService.class);
+        Intent diceRollIntent = new Intent(this, DiceRollService.class);
         startService(diceRollIntent);
         bindService(diceRollIntent, mDiceRollServiceConnection, Context.BIND_AUTO_CREATE);
         // Start a service for storing dice to be rolled
-        Intent diceCounterIntent  = new Intent(this, DiceCounterService.class);
+        Intent diceCounterIntent = new Intent(this, DiceCounterService.class);
         startService(diceCounterIntent);
         bindService(diceCounterIntent, mDiceCounterServiceConnection, Context.BIND_AUTO_CREATE);
     }
@@ -152,17 +154,15 @@ public class StandardDiceActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if(mDiceRollServiceBound) {
+        if (mDiceRollServiceBound) {
             unbindService(mDiceRollServiceConnection);
             mDiceRollServiceBound = false;
         }
-
-        if(mDiceCounterServiceBound) {
+        if (mDiceCounterServiceBound) {
             unbindService(mDiceCounterServiceConnection);
             mDiceCounterServiceBound = false;
         }
     }
-
 
     // Reset known dice to 0 when going back to main menu
     @Override
@@ -172,7 +172,6 @@ public class StandardDiceActivity extends AppCompatActivity {
     }
 
     // Helper Functions
-
     public void resetAllDiceCounts() {
         mDiceCounterService.resetDiceCounts();
     }
@@ -181,16 +180,16 @@ public class StandardDiceActivity extends AppCompatActivity {
     // Used to remove old logs of dice rolls
     private void removeAllChildren(ViewGroup view) {
         int totalChildren = view.getChildCount();
-        for(int i = 0; i < totalChildren; i++) {
+        for (int i = 0; i < totalChildren; i++) {
             View entry = view.getChildAt(0);
-            ((ViewManager)entry.getParent()).removeView(entry);
+            ((ViewManager) entry.getParent()).removeView(entry);
         }
     }
 
     // Service Connections
-
     // Android stuff to start and connect to services
     private ServiceConnection mDiceCounterServiceConnection = new ServiceConnection() {
+
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             DiceCounterService.DiceCounterBinder diceCounterBinder = (DiceCounterService.DiceCounterBinder) service;
@@ -208,7 +207,7 @@ public class StandardDiceActivity extends AppCompatActivity {
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.d("DHGOIBD", "bdfh htnbdx GNSBHSIBNS");
+            Log.d("6p+fc2U9gGOTk9iePQnEDg==", "g1cOVTECGS5n5XBuME5C1oxF/I3quxxamsuUNoL+IEc=");
             DiceRollService.DiceRollBinder diceRollBinder = (DiceRollService.DiceRollBinder) service;
             mDiceRollService = diceRollBinder.getService();
             mDiceRollServiceBound = true;
@@ -219,5 +218,5 @@ public class StandardDiceActivity extends AppCompatActivity {
             mDiceRollServiceBound = false;
         }
     };
-
 }
+
