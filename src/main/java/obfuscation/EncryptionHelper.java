@@ -1,4 +1,4 @@
-package obfuscation.datautils;
+package obfuscation;
 
 import org.apache.commons.codec.binary.Base64;
 
@@ -9,15 +9,20 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Arrays;
 
 /**
  * Created by User on 20/04/2017.
  */
 public class EncryptionHelper {
+    private char[] symbol = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
+
+    //Encryption method
     public String encrypt(String key, String initVector, String string){
         try {
             IvParameterSpec iv = new IvParameterSpec(initVector.getBytes("UTF-8"));
@@ -28,9 +33,6 @@ public class EncryptionHelper {
 
             byte[] encrypted = cipher.doFinal(string.getBytes());
             String encodedString = new String(Base64.encodeBase64(encrypted));
-
-//            System.out.println("encrypted string: " + Arrays.toString(encrypted));
-//            System.out.println("encrypted and encoded string: " + encodedString);
 
             return encodedString;
         } catch (UnsupportedEncodingException e) {
@@ -51,6 +53,7 @@ public class EncryptionHelper {
         return null;
     }
 
+    //Testing decryption. Moved to android code, kept in this tool for reference and testing
     public String decrypt(String key, String initVector, String encryptedString) throws NoSuchPaddingException, NoSuchAlgorithmException {
         try {
             IvParameterSpec iv = new IvParameterSpec(initVector.getBytes("UTF-8"));
@@ -65,9 +68,6 @@ public class EncryptionHelper {
 
             String decryptedString = new String(decryptedBytes);
 
-//            System.out.println("decrypted string: " + Arrays.toString(decryptedBytes));
-//            System.out.println("decrypted and decoded string: " + decryptedString);
-
             return decryptedString;
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -81,5 +81,36 @@ public class EncryptionHelper {
             e.printStackTrace();
         }
         return null;
+    }
+
+    //Generates random string of specified length
+    public String generateString(int length){
+        char[] c = new char[length];
+
+        for (int i = 0; i < length; i++){
+            int num = (int)Math.floor(Math.random() * 62);
+            c[i] = symbol[num];
+        }
+
+        return new String(c);
+    }
+
+    //Generates xor halves
+    public String[] generateKeyHalves(String key) {
+        String[] keyHalves = new String[2];
+
+        byte[] randomHalf = new byte[key.length()];
+        byte[] matchingHalf = new byte[key.length()];
+        byte[] keyBytes = key.getBytes();
+
+        for (int i = 0; i < key.length(); i++) {
+            randomHalf[i] = (byte)(Math.random()*256);
+            matchingHalf[i] = (byte) (randomHalf[i] ^ keyBytes[i]);
+        }
+
+        keyHalves[0] = Base64.encodeBase64String(randomHalf);
+        keyHalves[1] = Base64.encodeBase64String(matchingHalf);
+
+        return keyHalves;
     }
 }

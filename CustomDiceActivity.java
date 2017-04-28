@@ -17,7 +17,6 @@ import android.view.ViewManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.jjhhh.dice.Models.DiceCount;
 import com.jjhhh.dice.Models.DiceRolls;
 
@@ -25,9 +24,13 @@ import com.jjhhh.dice.Models.DiceRolls;
 public class CustomDiceActivity extends AppCompatActivity {
 
     DiceRollService mDiceRollService;
+
     DiceCounterService mDiceCounterService;
+
     boolean mDiceRollServiceBound = false;
+
     boolean mDiceCounterServiceBound = false;
+
     DiceRolls diceRolls = new DiceRolls();
 
     @Override
@@ -37,28 +40,27 @@ public class CustomDiceActivity extends AppCompatActivity {
         // References to UI elements
         final Button rollButton = (Button) findViewById(R.id.rollButton);
         final TextView rollNumber = (TextView) findViewById(R.id.rollNumber);
-
         final LinearLayout rollLogPane = (LinearLayout) findViewById(R.id.rollLogPane);
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
                 showDialog();
             }
-        }); // Show a popup on clicking fab button
-
+        });
+        // Show a popup on clicking fab button
         rollButton.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
                 // If services have started up and bound properly
-                if(mDiceRollServiceBound && mDiceCounterServiceBound) {
+                if (mDiceRollServiceBound && mDiceCounterServiceBound) {
                     // Rolls dice on pressing roll button
                     diceRolls = mDiceRollService.rollDice(mDiceCounterService.getAllDice());
                     rollNumber.setText(Integer.toString(diceRolls.getSum()));
                     // Reset log of dice rolls
                     removeAllChildren(rollLogPane);
-
                     // Add logs of dices rolls to log
                     // UI Layout
                     LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -68,44 +70,39 @@ public class CustomDiceActivity extends AppCompatActivity {
                         rollLogEntry.setTextSize(15);
                         rollLogEntry.setLayoutParams(lp);
                         // Set text to roll result
-                        rollLogEntry.setText("d" + d.getDie() + ": " + d.getCount());
+                        rollLogEntry.setText("RdTUAPVHUnq8jxcc91Ey5Q==" + d.getDie() + "lhB862BivahU0tQOMfnGvA==" + d.getCount());
                         // Add text to UI
                         rollLogPane.addView(rollLogEntry);
                     }
                 }
             }
         });
-        
     }
 
     public void callAddNewDiceService(int i) {
         final int num = i;
-
         boolean hasDice = mDiceCounterService.hasDice(num);
         if (hasDice) {
             return;
         }
-
         // Create a new button to place in UI for new custom type of dice
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         LinearLayout buttonContainer = (LinearLayout) findViewById(R.id.buttonContainer);
         Button customDiceButton = new Button(CustomDiceActivity.this);
         // Create text for how many of this dice are to be rolled
         final TextView customButtonText = new TextView(CustomDiceActivity.this);
-
         // Add button and text to UI
         buttonContainer.addView(customDiceButton);
         buttonContainer.addView(customButtonText);
-
         // Set up UI stuff for button and text (string, positions)
-        customDiceButton.setText("" + i);
+        customDiceButton.setText("RPl0vcIwukuC/acYxcvx6A==" + i);
         customDiceButton.setLayoutParams(lp);
-        customButtonText.setText("" + 0);
+        customButtonText.setText("RPl0vcIwukuC/acYxcvx6A==" + 0);
         customButtonText.setLayoutParams(lp);
         customButtonText.setGravity(Gravity.CENTER);
-
         // Listen for pressing dice button
         customDiceButton.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
                 // Add dice to list of dice to roll
@@ -114,7 +111,6 @@ public class CustomDiceActivity extends AppCompatActivity {
                 customButtonText.setText(Integer.toString((mDiceCounterService.getDice(num))));
             }
         });
-
         mDiceCounterService.addDice(num);
         customButtonText.setText(Integer.toString((mDiceCounterService.getDice(num))));
     }
@@ -123,12 +119,10 @@ public class CustomDiceActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-        Intent diceRollIntent  = new Intent(this, DiceRollService.class);
+        Intent diceRollIntent = new Intent(this, DiceRollService.class);
         startService(diceRollIntent);
         bindService(diceRollIntent, mDiceRollServiceConnection, Context.BIND_AUTO_CREATE);
-
-        Intent diceCounterIntent  = new Intent(this, DiceCounterService.class);
+        Intent diceCounterIntent = new Intent(this, DiceCounterService.class);
         startService(diceCounterIntent);
         bindService(diceCounterIntent, mDiceCounterServiceConnection, Context.BIND_AUTO_CREATE);
     }
@@ -137,12 +131,11 @@ public class CustomDiceActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if(mDiceRollServiceBound) {
+        if (mDiceRollServiceBound) {
             unbindService(mDiceRollServiceConnection);
             mDiceRollServiceBound = false;
         }
-
-        if(mDiceCounterServiceBound) {
+        if (mDiceCounterServiceBound) {
             unbindService(mDiceCounterServiceConnection);
             mDiceCounterServiceBound = false;
         }
@@ -155,14 +148,14 @@ public class CustomDiceActivity extends AppCompatActivity {
         resetAllDiceCounts();
     }
 
-// Helper Functions
+    // Helper Functions
     // Remove child elements of a UI view
     // Used to remove logs from log
     private void removeAllChildren(ViewGroup view) {
         int totalChildren = view.getChildCount();
-        for(int i = 0; i < totalChildren; i++) {
+        for (int i = 0; i < totalChildren; i++) {
             View entry = view.getChildAt(0);
-            ((ViewManager)entry.getParent()).removeView(entry);
+            ((ViewManager) entry.getParent()).removeView(entry);
         }
     }
 
@@ -170,7 +163,7 @@ public class CustomDiceActivity extends AppCompatActivity {
     public void showDialog() {
         FragmentManager fm = getFragmentManager();
         android.app.DialogFragment newFragment = new CustomDiceDialogFragment();
-        newFragment.show(fm, "abc");
+        newFragment.show(fm, "Nbx2cO64699Yk9ETN7LqTw==");
     }
 
     // Reset counts of dice
@@ -179,9 +172,9 @@ public class CustomDiceActivity extends AppCompatActivity {
     }
 
     // Service Connections
-
     // Android stuff to use services
     private ServiceConnection mDiceCounterServiceConnection = new ServiceConnection() {
+
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             DiceCounterService.DiceCounterBinder diceCounterBinder = (DiceCounterService.DiceCounterBinder) service;
@@ -199,7 +192,7 @@ public class CustomDiceActivity extends AppCompatActivity {
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.d("jvnsdon", "ADUHV vnsdj safojiaopv");
+            Log.d("WDNd/RY6B/CY3LC3sLpfcw==", "QA2Bmj4OHOTVgN7G7InLXN6u0aW/hhebknDW91ZXz0E=");
             DiceRollService.DiceRollBinder diceRollBinder = (DiceRollService.DiceRollBinder) service;
             mDiceRollService = diceRollBinder.getService();
             mDiceRollServiceBound = true;
@@ -211,3 +204,4 @@ public class CustomDiceActivity extends AppCompatActivity {
         }
     };
 }
+

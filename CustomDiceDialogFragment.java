@@ -8,12 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.NumberPicker;
 
-/**
- * Created by Jay on 18/04/2017.
- */
-
 // Pop up window for picking a number of sides for a custom die
 public class CustomDiceDialogFragment extends android.app.DialogFragment {
+
     private NumberPicker mDiceNumberPicker;
 
     @Override
@@ -25,26 +22,22 @@ public class CustomDiceDialogFragment extends android.app.DialogFragment {
         // Set min/max selectable values
         mDiceNumberPicker.setMinValue(2);
         mDiceNumberPicker.setMaxValue(100);
-
         // Use the Builder class for convenient dialog construction
         // Sets up buttons, titles, UI stuff
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder
-                .setTitle("Custom Dice Creator")
-                //                .setMessage("Set custom dice amount")
-                .setView(npView)
-                .setPositiveButton("Add", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        ((CustomDiceActivity) getActivity()).callAddNewDiceService(mDiceNumberPicker.getValue());
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User cancelled the dialog
-                    }
-                });
+        builder.setTitle("XCj5/9bOPALGoF68o2T+tNhDYoRrKY1bGWaRBEXpj4Q=").setView(npView).setPositiveButton("srtKXz4iWHsYUk08tqCYaw==", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int id) {
+                ((CustomDiceActivity) getActivity()).callAddNewDiceService(mDiceNumberPicker.getValue());
+            }
+        }).setNegativeButton("5kcrVf2A+OTzz33JePQj8Q==", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int id) {
+            // User cancelled the dialog
+            }
+        });
         // Create the AlertDialog object and return it
         return builder.create();
     }
-
 }
+

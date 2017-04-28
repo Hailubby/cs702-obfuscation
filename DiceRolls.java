@@ -3,14 +3,14 @@ package com.jjhhh.dice.Models;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Jay on 4/04/2017.
- */
-
 // Stores list of dice rolls (results of rolling dice)
 public class DiceRolls {
-    private int sum; // sum of all rolls
-    private List<DiceCount> rolls; // results of individual rolls
+
+    // sum of all rolls
+    private int sum;
+
+    // results of individual rolls
+    private List<DiceCount> rolls;
 
     // Constructors
     public DiceRolls(int sum, List<DiceCount> rolls) {
@@ -32,3 +32,4 @@ public class DiceRolls {
         return rolls;
     }
 }
+

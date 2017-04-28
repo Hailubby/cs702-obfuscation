@@ -1,9 +1,9 @@
 import com.github.javaparser.ast.CompilationUnit;
-import obfuscation.datautils.DecryptionCreator;
-import obfuscation.datautils.PackageVisitor;
-import obfuscation.datautils.StringEncryptionVisitor;
+import obfuscation.DecryptionCreator;
+import obfuscation.PackageVisitor;
+import obfuscation.StringEncryptionVisitor;
 import utilities.CommandLineParser;
-import utilities.JavaExporter;
+import utilities.Exporter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
@@ -17,42 +17,35 @@ public class Main {
     public static void main(String[] args) throws FileNotFoundException, URISyntaxException {
         CommandLineParser cmdLineParser = new CommandLineParser();
         StringEncryptionVisitor stringEncryptionVisitor = new StringEncryptionVisitor();
-        JavaExporter javaExporter = new JavaExporter();
         PackageVisitor pkgVisitor = new PackageVisitor();
+        Exporter exporter = new Exporter();
 
-//        File sourceFile = new File(Main.class.getClass().getResource("/AppJavaSrc/com/jjhhh/dice/CustomDiceActivity.java").toURI());
-//        String fileName = "CustomDiceActivity.java";
-//
-//        //parse the file
-//        CompilationUnit compilationUnit = JavaParser.parse(sourceFile);
-//
-//        // prints the resulting compilation unit to default system output
-//        //System.out.println(compilationUnit.toString());
-//
-//        // visit and print the methods names
-//        new StringEncryptionVisitor().visit(compilationUnit, null);
-//        System.out.println(compilationUnit.toString());
-//
-//        javaExporter.exportFile(fileName, compilationUnit.toString());
+        //Set up Key and initialisation vectors to be used for encryption
+        stringEncryptionVisitor.setKeyAndIv();
+        stringEncryptionVisitor.setHalves();
 
-
+        //TODO ask user to input path to folder containing java files to obfuscate. change method params to string instead of File.
         File folder = new File(Main.class.getClass().getResource("/Original").toURI());
         cmdLineParser.findJavaFiles(folder);
 
         HashMap<String,CompilationUnit> cuMap = cmdLineParser.getCuMap();
+
 
         if (cuMap.size() != 0){
             Iterator<Map.Entry<String, CompilationUnit>> entries = cuMap.entrySet().iterator();
             while (entries.hasNext()) {
                 Map.Entry<String, CompilationUnit> currentEntry = entries.next();
                 pkgVisitor.visit(currentEntry.getValue(), null);
-                //stringEncryptionVisitor.visit(currentEntry.getValue(), null);
-                //System.out.println(currentEntry.getValue().toString());
+                stringEncryptionVisitor.visit(currentEntry.getValue(), null);
             }
 
-            DecryptionCreator decryptionCreator = new DecryptionCreator(stringEncryptionVisitor.getKey(), stringEncryptionVisitor.getInitVector(), pkgVisitor);
-            decryptionCreator.createDecryption();
-            //javaExporter.exportFile(cuMap);
+
+            DecryptionCreator decryptionCreator = new DecryptionCreator(stringEncryptionVisitor.getKeyHalf1(), stringEncryptionVisitor.getKeyHalf2(), stringEncryptionVisitor.getIvHalf1(), stringEncryptionVisitor.getIvHalf2(), pkgVisitor);
+            CompilationUnit decryptionCu = decryptionCreator.createDecryption();
+
+            cuMap.put("Decryptor.java", decryptionCu);
+            exporter.exportJavaFile(cuMap);
+
         }
         else {
             System.out.println("No Java files located in folder to obfuscate");

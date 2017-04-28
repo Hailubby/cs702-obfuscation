@@ -11,9 +11,10 @@ import java.util.Map;
 /**
  * Created by User on 20/04/2017.
  */
-public class JavaExporter {
+public class Exporter {
 
-    public void exportFile(HashMap<String, CompilationUnit> cuMap) {
+    //Prints each compilation unit to files with their respective java file names
+    public void exportJavaFile(HashMap<String, CompilationUnit> cuMap) {
         PrintWriter out = null;
 
         Iterator<Map.Entry<String, CompilationUnit>> entries = cuMap.entrySet().iterator();
@@ -29,4 +30,5 @@ public class JavaExporter {
             }
         }
     }
+
 }
