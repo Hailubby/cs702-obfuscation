@@ -32,6 +32,7 @@ public class DecryptionCreator {
     }
 
 
+    //Generates Decryptor compilation unit with xor-ed key and iv halfs used in the encryption
     public CompilationUnit createDecryption() {
         CompilationUnit cu = new CompilationUnit();
         String pkgName = findPkgName();
@@ -48,7 +49,7 @@ public class DecryptionCreator {
         //Sets class name
         ClassOrInterfaceDeclaration classType = cu.addClass("Decryptor");
 
-        //Adds key and init vector fields
+        //Adds xor key and xor init vector fields
         classType.addField("String[]", "keyHalves = {\"" + keyHalf1 + "\", \"" + keyHalf2 + "\"}", Modifier.PRIVATE);
         classType.addField("String[]", "ivHalves = {\"" + ivHalf1 + "\", \"" + ivHalf2 + "\"}", Modifier.PRIVATE);
 
@@ -62,6 +63,7 @@ public class DecryptionCreator {
 
         BlockStmt decryptMethodBlock = new BlockStmt();
 
+        //Try block
         TryStmt tryStmt = new TryStmt();
         BlockStmt tryBlock = new BlockStmt();
         tryBlock.addStatement("IvParameterSpec iv = new IvParameterSpec(getOriginal(0).getBytes(\"UTF-8\"));");
@@ -75,29 +77,36 @@ public class DecryptionCreator {
 
         tryStmt.setTryBlock(tryBlock);
 
+        //Catch block
         BlockStmt catchBlock1 = new BlockStmt();
-
+        //What to catch
         ClassOrInterfaceType exceptionType = new ClassOrInterfaceType("Exception");
         Parameter parameter = new Parameter(exceptionType, "e");
         CatchClause catchClause = new CatchClause(parameter, catchBlock1);
+        //How to handle the exception
         BlockStmt catchBlock2 = new BlockStmt();
         catchBlock2.addStatement("e.printStackTrace();");
         catchClause.setBody(catchBlock2);
 
+        //Add the catch clause to the try statement
         NodeList catchList = new NodeList();
         catchList.add(catchClause);
         tryStmt.setCatchClauses(catchList);
 
+        //Add try block to the decrypt method block
         decryptMethodBlock.addStatement(tryStmt);
         decryptMethodBlock.addStatement("return null;");
 
+        //Add the decrypt method block to the actual method node
         decryptMethod.setBody(decryptMethodBlock);
 
+        //Add decrypt method to the actual class
         classType.addMember(decryptMethod);
 
         //getOriginal method
         EnumSet<Modifier> getOriginalModifiers = EnumSet.of(Modifier.PRIVATE);
         MethodDeclaration getOriginalMethod = new MethodDeclaration(getOriginalModifiers, stringRetType, "getOriginal");
+        //Set parameters to the method
         getOriginalMethod.addAndGetParameter(int.class, "mode");
 
         BlockStmt getOrigMethodBlock = new BlockStmt();
@@ -105,41 +114,50 @@ public class DecryptionCreator {
         getOrigMethodBlock.addStatement("byte[] half1;");
         getOrigMethodBlock.addStatement("byte[] half2;");
 
+        //If statement node
         IfStmt ifStmt = new IfStmt();
         NameExpr ifCondition = new NameExpr("mode == 0");
         ifStmt.setCondition(ifCondition);
 
+        //If statement block body
         BlockStmt ifBlock = new BlockStmt();
         ifBlock.addStatement("half1 = Base64.decode(ivHalves[0], 0);");
         ifBlock.addStatement("half2 = Base64.decode(ivHalves[1], 0);");
 
+        //Add the block to the if statement
         ifStmt.setThenStmt(ifBlock);
 
+        //Else block and adds the else block to the if statement
         BlockStmt elseBlock = new BlockStmt();
         elseBlock.addStatement("half1 = Base64.decode(keyHalves[0], 0);");
         elseBlock.addStatement("half2 = Base64.decode(keyHalves[1], 0);");
         ifStmt.setElseStmt(elseBlock);
 
+        //Add fi statement block (including else) to the mthod body
         getOrigMethodBlock.addStatement(ifStmt);
 
         getOrigMethodBlock.addStatement("byte[] key = new byte[half1.length];");
 
-        //For block, xor.
+        //For loop block, xor.
         ForStmt forStmt = new ForStmt();
 
         NodeList<Expression> initialisation = new NodeList<>();
+        //loop counter initialisation
         NameExpr initExpr = new NameExpr("int i = 0");
         initialisation.add(initExpr);
         forStmt.setInitialization(initialisation);
 
+        //loop condition initialisation
         NameExpr compareExpr = new NameExpr("i < half1.length");
         forStmt.setCompare(compareExpr);
 
+        //loop incrementer initialisation
         NodeList<Expression> update = new NodeList<>();
         NameExpr updateExpr = new NameExpr("i++");
         update.add(updateExpr);
         forStmt.setUpdate(update);
 
+        //for loop body
         BlockStmt forBlock = new BlockStmt();
         forBlock.addStatement("key[i] = (byte) (half1[i] ^ half2[i]);");
         forStmt.setBody(forBlock);
@@ -152,6 +170,7 @@ public class DecryptionCreator {
 
         classType.addMember(getOriginalMethod);
 
+        //return decryptor compilation unit
         return cu;
     }
 

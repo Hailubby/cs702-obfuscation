@@ -21,7 +21,9 @@ public class Exporter {
         while (entries.hasNext()) {
             Map.Entry<String, CompilationUnit> currentEntry = entries.next();
             try {
+                //File name = key of hashmap
                 out = new PrintWriter(currentEntry.getKey());
+                //Prints corresponding compilation unit to the file
                 out.println(currentEntry.getValue().toString());
             } catch (FileNotFoundException e) {
                 e.printStackTrace();

@@ -99,12 +99,15 @@ public class EncryptionHelper {
     public String[] generateKeyHalves(String key) {
         String[] keyHalves = new String[2];
 
+        //create empty byte arrays of the same size as the key the xor halves are being created for
         byte[] randomHalf = new byte[key.length()];
         byte[] matchingHalf = new byte[key.length()];
         byte[] keyBytes = key.getBytes();
 
         for (int i = 0; i < key.length(); i++) {
+            //Generate random half
             randomHalf[i] = (byte)(Math.random()*256);
+            //xor random half with key to get the matching half
             matchingHalf[i] = (byte) (randomHalf[i] ^ keyBytes[i]);
         }
 

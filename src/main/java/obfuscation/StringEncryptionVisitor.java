@@ -24,6 +24,8 @@ public class StringEncryptionVisitor  extends VoidVisitorAdapter<Void>{
         super.visit(s, arg);
     }
 
+
+    //Set random key and initialisation vector to be used in encryption
     public void setKeyAndIv(){
         this.key = encryptionHelper.generateString(16);
         this.initVector = encryptionHelper.generateString(16);
@@ -40,6 +42,7 @@ public class StringEncryptionVisitor  extends VoidVisitorAdapter<Void>{
         this.ivHalf2 = ivHalves[1];
     }
 
+    //getters of key and iv halves
     public String getKeyHalf1() {
         return keyHalf1;
     }
