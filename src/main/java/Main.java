@@ -24,13 +24,15 @@ public class Main {
         stringEncryptionVisitor.setKeyAndIv();
         stringEncryptionVisitor.setHalves();
 
-        //TODO ask user to input path to folder containing java files to obfuscate. change method params to string instead of File.
+        //Gets folder "Original" from the resources folder
         File folder = new File(Main.class.getClass().getResource("/Original").toURI());
+        //Parse folder into compilation units
         cmdLineParser.findJavaFiles(folder);
 
+        //Retieve hashmap of compilation units
         HashMap<String,CompilationUnit> cuMap = cmdLineParser.getCuMap();
 
-
+        //For each compilation unit, visit all the strings in them and encrypt them
         if (cuMap.size() != 0){
             Iterator<Map.Entry<String, CompilationUnit>> entries = cuMap.entrySet().iterator();
             while (entries.hasNext()) {
@@ -39,11 +41,13 @@ public class Main {
                 stringEncryptionVisitor.visit(currentEntry.getValue(), null);
             }
 
-
+            //Input key and iv halves and package visitor to the decryption creator to create the Decryptor compilation unit
             DecryptionCreator decryptionCreator = new DecryptionCreator(stringEncryptionVisitor.getKeyHalf1(), stringEncryptionVisitor.getKeyHalf2(), stringEncryptionVisitor.getIvHalf1(), stringEncryptionVisitor.getIvHalf2(), pkgVisitor);
             CompilationUnit decryptionCu = decryptionCreator.createDecryption();
 
+            //Add decryptor compilation unit to hashmap of compilation units
             cuMap.put("Decryptor.java", decryptionCu);
+            //export all compilation units to java files
             exporter.exportJavaFile(cuMap);
 
         }

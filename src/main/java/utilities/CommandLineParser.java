@@ -14,7 +14,6 @@ import java.util.HashMap;
 public class CommandLineParser {
     private HashMap<String, CompilationUnit> cuMap = new HashMap<String, CompilationUnit>();
 
-    //TODO chanfe param to String path, create/find file using that path
     public void findJavaFiles(File folder) {
         //traverse folder structure searching for java files
         for(File file : folder.listFiles()) {
@@ -39,6 +38,7 @@ public class CommandLineParser {
         cuMap.put(fileName, compilationUnit);
     }
 
+    //Retrieve hashmap of compilation units
     public HashMap<String, CompilationUnit> getCuMap() {
         return cuMap;
     }
